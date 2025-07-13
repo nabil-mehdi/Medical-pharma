@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    libpq-dev \
+    && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
 # Active mod_rewrite pour Laravel
 RUN a2enmod rewrite
@@ -30,8 +31,11 @@ RUN composer install --no-dev --optimize-autoloader
 # Donne les bons droits aux dossiers de cache Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose le port 80
-EXPOSE 80
+# Configure Apache pour écouter sur le port Railway
+RUN sed -i "s/80/${PORT}/g" /etc/apache2/ports.conf /etc/apache2/sites-enabled/000-default.conf
+
+# Expose le port Railway (8080 par défaut)
+EXPOSE 8080
 
 # Commande de démarrage
 CMD ["apache2-foreground"] 
