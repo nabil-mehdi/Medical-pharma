@@ -1,5 +1,11 @@
+# Utilise une image officielle PHP avec Apache
 FROM php:8.2-apache
 
+# Installe Node.js 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+# Installe les extensions PHP nécessaires à Laravel
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
@@ -11,22 +17,35 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
+# Active mod_rewrite pour Laravel
 RUN a2enmod rewrite
 
+# Copie le code source dans le conteneur
 COPY . /var/www/html
 
+# Définit le répertoire de travail
 WORKDIR /var/www/html
 
+# Installe les dépendances front et build les assets
+RUN npm install && npm run build
+
+# Installe Composer
 COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
 
+# Installe les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader
 
+# Donne les bons droits aux dossiers de cache Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Configure Apache pour écouter sur le port 8080 (fixe)
 RUN sed -i "s/80/8080/g" /etc/apache2/ports.conf /etc/apache2/sites-enabled/000-default.conf
 
+# Change le DocumentRoot d'Apache pour pointer sur /var/www/html/public
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
+# Expose le port 8080
 EXPOSE 8080
 
+# Commande de démarrage
 CMD ["apache2-foreground"]
