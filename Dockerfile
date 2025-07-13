@@ -34,8 +34,11 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Configure Apache pour écouter sur le port 8080 (fixe)
 RUN sed -i "s/80/8080/g" /etc/apache2/ports.conf /etc/apache2/sites-enabled/000-default.conf
 
+# Change le DocumentRoot d'Apache pour pointer sur /var/www/html/public
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
 # Expose le port 8080
 EXPOSE 8080
 
 # Commande de démarrage
-CMD ["apache2-foreground"] 
+CMD ["apache2-foreground"]
