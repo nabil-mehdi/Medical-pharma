@@ -1,10 +1,8 @@
 FROM php:8.2-apache
 
-# Installe Node.js 18
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
-# Installe les extensions PHP nécessaires à Laravel
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
@@ -24,10 +22,8 @@ WORKDIR /var/www/html
 
 COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
 
-# Installe les dépendances PHP AVANT le build front
 RUN composer install --no-dev --optimize-autoloader
 
-# Build front après installation des dépendances PHP
 RUN npm install && npm run build
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
@@ -35,6 +31,10 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN sed -i "s/80/8080/g" /etc/apache2/ports.conf /etc/apache2/sites-enabled/000-default.conf
 
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Correction des permissions sur public/
+RUN chmod -R 755 /var/www/html/public
+RUN chown -R www-data:www-data /var/www/html/public
 
 EXPOSE 8080
 
