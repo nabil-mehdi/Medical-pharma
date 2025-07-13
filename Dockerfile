@@ -1,4 +1,3 @@
-# Utilise une image officielle PHP avec Apache
 FROM php:8.2-apache
 
 # Installe Node.js 18
