@@ -81,7 +81,7 @@ class RendezVouscontroller extends Controller
         }
 
         $request->validate([
-            'statut' => 'required|string|in:en_attente,confirmé,annulé,terminé',
+            'statut' => 'required|string|in:en_attente,confirme,annule,termine',
         ]);
 
         $rendezVous->statut = $request->statut;
