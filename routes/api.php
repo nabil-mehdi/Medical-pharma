@@ -32,6 +32,7 @@ Route::post('/rendezvous', [RendezVousController::class, 'store']);
 Route::get('/rendezvous', [RendezVousController::class, 'index']);
 Route::put('/rendezvous/{id}/statut', [RendezVousController::class, 'updateStatut']);
 Route::get('/medecins', [Medecincontroller::class, 'index']);
+Route::get('/medecinsfiltre', [Medecincontroller::class, 'filtrerMedecins']);
 Route::get('/specialites', [Specialitecontroller::class, 'index']);
 Route::get('/soins', [Soincontroller::class, 'index']);
 Route::get('/infirmieres', [Infirmiercontroller::class, 'index']);
