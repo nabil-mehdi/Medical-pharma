@@ -10,10 +10,14 @@ use App\Http\Controllers\Pharmaciecontroller;
 use App\Http\Controllers\Specialitecontroller;
 use App\Http\Controllers\Soincontroller;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Ambulancecontroller;
+use App\Http\Controllers\Villecontroller;
+use App\Models\Ambulance;
 use App\Models\Infirmiere;
 use App\Models\Pharmacie;
 use App\Models\RendezVous;
 use App\Models\Specialite;
+use App\Models\Ville;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +52,12 @@ Route::get('/messages/conversation/{userId}/{otherUserId}', [MessageController::
 Route::put('/messages/{messageId}/{userId}/read', [MessageController::class, 'markAsRead']);
 Route::get('/messages/unread/count', [MessageController::class, 'getUnreadCount']);
 Route::get('/messages/{userId}', [MessageController::class, 'getallmessage']);
+Route::get('/ambulances', [AmbulanceController::class, 'index']);
+Route::get('/ambulance/{id}', [AmbulanceController::class, 'getinfoambulance']);
+Route::put('/ambulance/{id}/disponible', [AmbulanceController::class, 'updatedispo']);
+Route::get('/villes', [Villecontroller::class, 'index']);
+
+
 
 
 

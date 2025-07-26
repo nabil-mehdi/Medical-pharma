@@ -73,4 +73,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Infirmiere::class);
     }
+    public function ambulanceProfile()
+    {
+        return $this->hasOne(Ambulance::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ambulance;
 use App\Models\Infirmier;
 use App\Models\Infirmiere;
 use App\Models\User;
@@ -75,7 +76,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'date_naissance' => 'required|date',
             'password' => 'required|confirmed',
-            'role' => 'required|in:patient,medecin,pharmacie,infirmiere'
+            'role' => 'required|in:patient,medecin,pharmacie,infirmiere,ambulance'
         ]);
 
         $user = User::create([
@@ -88,36 +89,48 @@ class UserController extends Controller
 
         ]);
 
-        if ($user->role == 'medecin') {
-            Medecin::create([
-                'user_id' => $user->id,
-                'specialite_id' => $request->specialite,
-                'description' => $request->description,
-            ]);
-        }
-        if ($user->role == 'pharmacie') {
-            Pharmacie::create([
-                'user_id' => $user->id,
-                'nom_pharmacie' => $request->nom_pharmacie,
-                'adresse' => $request->adresse,
-                'ouvert' =>    $request->ouvert,
-                'latitude' => $request->latitude,
-                'longitude' => $request->longitude
+        switch ($user->role) {
+            case 'medecin':
+                Medecin::create([
+                    'user_id' => $user->id,
+                    'specialite_id' => $request->specialite,
+                    'description' => $request->description,
+                ]);
+                break;
 
-            ]);
-        }
-        if ($user->role == 'infirmiere') {
-            Infirmiere::create([
-                'user_id' => $user->id,
-                'soin_id' => $request->soin_id,
+            case 'pharmacie':
+                Pharmacie::create([
+                    'user_id' => $user->id,
+                    'nom_pharmacie' => $request->nom_pharmacie,
+                    'adresse' => $request->adresse,
+                    'ouvert' => $request->ouvert,
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude,
+                ]);
+                break;
 
-            ]);
+            case 'infirmiere':
+                Infirmiere::create([
+                    'user_id' => $user->id,
+                    'soin_id' => $request->soin_id,
+                ]);
+                break;
+
+            case 'ambulance':
+                Ambulance::create([
+                    'user_id' => $user->id,
+                    'ville_id' => $request->ville_id,
+                    'nom' => $request->nomsociete,
+                    'tel' => $request->tel,
+                    'disponible' => $request->disponible,
+                ]);
+                break;
         }
 
         $token = $user->createToken("api_token")->plainTextToken;
 
         return response()->json([
-            'user' => $user->load('medecinProfile', 'pharmacie', 'infirmierProfile'),
+            'user' => $user->load('medecinProfile', 'pharmacie', 'infirmierProfile', 'ambulanceProfile'),
             'token' => $token,
         ]);
     }
