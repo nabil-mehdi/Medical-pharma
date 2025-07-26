@@ -38,4 +38,4 @@ RUN chown -R www-data:www-data /var/www/html/public
 
 EXPOSE 8080
 
-CMD php artisan storage:link && apache2-foreground
+CMD php artisan migrate --force && php artisan storage:link && apache2-foreground
